@@ -9,14 +9,18 @@ import { getBackendStatus } from '@/lib/api';
 
 interface EstadoBackend {
   status: string;
-  mqtt: {
+  mqtt?: {
     connected: boolean;
-    broker: string;
+    broker?: string;
   };
-  firebase: {
+  supabase?: {
+    connected: boolean;
+    readable?: boolean;
+  };
+  firebase?: {
     connected: boolean;
   };
-  uptime: number;
+  uptime?: number;
 }
 
 interface EstadoConexionProps {
@@ -62,7 +66,10 @@ export default function EstadoConexion({ onReconectar }: EstadoConexionProps) {
     return `${hours}h ${minutes}m`;
   };
 
-  const todoConectado = estado?.mqtt.connected && estado?.firebase.connected;
+  // Verificar conexiones (compatible con Firebase y Supabase)
+  const mqttConectado = estado?.mqtt?.connected ?? false;
+  const dbConectada = estado?.supabase?.connected ?? estado?.firebase?.connected ?? false;
+  const todoConectado = mqttConectado && dbConectada;
 
   return (
     <AnimatePresence mode="wait">
@@ -95,7 +102,7 @@ export default function EstadoConexion({ onReconectar }: EstadoConexionProps) {
             <Badge variant="default" className="bg-green-500 gap-1">
               Conectado
             </Badge>
-            {estado && (
+            {estado?.uptime && (
               <span className="text-xs text-muted-foreground hidden sm:block">
                 Uptime: {formatUptime(estado.uptime)}
               </span>

@@ -24,11 +24,14 @@ export default function DashboardPage() {
   const [datosGrafico, setDatosGrafico] = useState<DatosGrafico[]>([]);
   const [loading, setLoading] = useState(true);
   const [ultimaActualizacion, setUltimaActualizacion] = useState<Date>(new Date());
-  const [errorFirebase, setErrorFirebase] = useState(false);
+  const [errorBackend, setErrorBackend] = useState(false);
+  const [errorMensaje, setErrorMensaje] = useState('');
 
   const cargarDatos = useCallback(async () => {
     try {
-      setErrorFirebase(false);
+      setErrorBackend(false);
+      setErrorMensaje('');
+      
       const [eventosData, estadisticasData, graficosData] = await Promise.all([
         getEventosRecientes(100),
         getEstadisticas(),
@@ -43,9 +46,18 @@ export default function DashboardPage() {
     } catch (error) {
       console.error('Error cargando datos:', error);
       
-      // Detectar error de cuota de Firebase
-      if ((error as Error).message === 'FIREBASE_QUOTA_EXCEEDED') {
-        setErrorFirebase(true);
+      // Detectar diferentes tipos de errores
+      const errorMsg = (error as Error).message;
+      
+      if (errorMsg === 'DATABASE_ERROR') {
+        setErrorBackend(true);
+        setErrorMensaje('Error de base de datos. El backend está usando el caché de emergencia.');
+      } else if (errorMsg === 'BACKEND_TIMEOUT') {
+        setErrorBackend(true);
+        setErrorMensaje('Timeout al conectar con el backend. Verifica tu conexión.');
+      } else if (errorMsg.includes('Failed to fetch')) {
+        setErrorBackend(true);
+        setErrorMensaje('No se puede conectar con el backend. Verifica que esté en línea.');
       }
     } finally {
       setLoading(false);
@@ -108,32 +120,38 @@ export default function DashboardPage() {
       </header>
 
       <main className="container mx-auto px-4 py-8">
-        {/* Alerta de Error de Firebase */}
-        {errorFirebase && (
-          <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border-2 border-red-500 rounded-lg">
+        {/* Alerta de Error de Backend */}
+        {errorBackend && (
+          <div className="mb-6 p-4 bg-amber-50 dark:bg-amber-900/20 border-2 border-amber-500 rounded-lg">
             <div className="flex items-start gap-3">
-              <AlertTriangle className="h-6 w-6 text-red-500 flex-shrink-0 mt-0.5" />
+              <AlertTriangle className="h-6 w-6 text-amber-500 flex-shrink-0 mt-0.5" />
               <div className="flex-1">
-                <h3 className="text-lg font-bold text-red-700 dark:text-red-400 mb-2">
-                  ⚠️ Error: Cuota de Firebase Excedida
+                <h3 className="text-lg font-bold text-amber-700 dark:text-amber-400 mb-2">
+                  ⚠️ Advertencia: Error de Conexión
                 </h3>
-                <p className="text-sm text-red-600 dark:text-red-300 mb-3">
-                  El backend no puede acceder a Firestore porque se ha excedido la cuota diaria. 
-                  Esto es un problema del plan gratuito de Firebase.
+                <p className="text-sm text-amber-600 dark:text-amber-300 mb-3">
+                  {errorMensaje || 'Hubo un problema al conectar con el backend.'}
                 </p>
-                <div className="bg-white dark:bg-gray-800 p-3 rounded border border-red-200 dark:border-red-800">
-                  <p className="text-xs font-mono text-gray-700 dark:text-gray-300 mb-2">
-                    <strong>Error técnico:</strong> 8 RESOURCE_EXHAUSTED: Quota exceeded.
+                <div className="bg-white dark:bg-gray-800 p-3 rounded border border-amber-200 dark:border-amber-800">
+                  <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">
+                    <strong>Estado:</strong> El backend está usando caché de emergencia. Los datos pueden no estar actualizados.
                   </p>
                   <p className="text-xs text-gray-600 dark:text-gray-400">
                     <strong>Soluciones:</strong>
                   </p>
                   <ul className="text-xs text-gray-600 dark:text-gray-400 list-disc list-inside mt-1 space-y-1">
-                    <li>Esperar hasta mañana (la cuota se resetea diariamente)</li>
-                    <li>Actualizar a Firebase Blaze Plan (pago por uso)</li>
-                    <li>Optimizar queries en el backend para reducir lecturas</li>
+                    <li>Verifica que el backend esté en línea en Railway</li>
+                    <li>Revisa la URL del backend en las variables de entorno</li>
+                    <li>Verifica la conexión a Supabase desde el backend</li>
+                    <li>El backend usa caché automático para mantener funcionando el dashboard</li>
                   </ul>
                 </div>
+                <button
+                  onClick={cargarDatos}
+                  className="mt-3 px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white text-sm rounded-lg transition-colors"
+                >
+                  🔄 Reintentar Conexión
+                </button>
               </div>
             </div>
           </div>
