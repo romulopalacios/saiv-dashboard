@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { Car, AlertTriangle, Activity, TrendingUp } from 'lucide-react';
+import { motion } from 'framer-motion';
 import StatCard from '@/components/dashboard/StatCard';
 import ChartCard from '@/components/dashboard/ChartCard';
 import TablaEventos from '@/components/dashboard/TablaEventos';
@@ -14,6 +15,7 @@ import FiltrosAvanzados from '@/components/dashboard/FiltrosAvanzados';
 import ExportarDatos from '@/components/dashboard/ExportarDatos';
 import AnalisisComportamiento from '@/components/dashboard/AnalisisComportamiento';
 import ComparacionTemporal from '@/components/dashboard/ComparacionTemporal';
+import WelcomeBanner from '@/components/dashboard/WelcomeBanner';
 import { getEventosRecientes, getEstadisticas, getDatosGrafico } from '@/lib/api';
 import { EventoVehiculo, Estadisticas, DatosGrafico } from '@/lib/types';
 
@@ -92,112 +94,175 @@ export default function DashboardPage() {
   const ultimoEvento = eventosFiltrados[0];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-      {/* Header */}
-      <header className="border-b bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-blue-600 rounded-lg">
-              <Car className="h-6 w-6 text-white" />
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
+      {/* Header Rediseñado - Limpio y Profesional */}
+      <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 sticky top-0 z-50 shadow-sm">
+        <div className="container mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            
+            {/* Lado Izquierdo: Logo ULEAM + Info Sistema */}
+            <div className="flex items-center gap-4">
+              {/* Logo ULEAM Real */}
+              <div className="relative group">
+                <div className="absolute inset-0 bg-gradient-to-br from-[#C41E3A]/20 to-[#9DC03E]/20 rounded-xl blur-lg group-hover:blur-xl transition-all opacity-0 group-hover:opacity-100"></div>
+                <div className="relative bg-white dark:bg-gray-800 p-2 rounded-xl border-2 border-gray-200 dark:border-gray-700 hover:border-[#C41E3A] dark:hover:border-[#C41E3A] transition-all">
+                  <img 
+                    src="/uleam-logo.svg" 
+                    alt="ULEAM" 
+                    className="h-12 w-12 object-contain"
+                  />
+                </div>
+              </div>
+
+              {/* Separador sutil */}
+              <div className="h-12 w-px bg-gradient-to-b from-transparent via-gray-300 dark:via-gray-700 to-transparent"></div>
+              
+              {/* Información del Sistema */}
+              <div>
+                <h1 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white tracking-tight">
+                  SIAV Dashboard
+                </h1>
+                <div className="flex items-center gap-2 mt-0.5">
+                  <span className="text-xs text-gray-500 dark:text-gray-400">
+                    Sistema Inteligente de Analítica Vial
+                  </span>
+                  <span className="hidden sm:inline text-xs text-gray-300 dark:text-gray-600">•</span>
+                  <span className="hidden sm:inline text-xs font-medium text-[#C41E3A]">
+                    ULEAM
+                  </span>
+                </div>
+              </div>
             </div>
-            <div>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                SIAV Dashboard
-              </h1>
-              <p className="text-sm text-muted-foreground">
-                Sistema Inteligente de Analítica Vial
-              </p>
+
+            {/* Lado Derecho: Controles */}
+            <div className="flex items-center gap-3">
+              {/* Última actualización - más compacto */}
+              <div className="hidden lg:flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+                <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse"></div>
+                <div className="text-xs">
+                  <span className="text-gray-500 dark:text-gray-400">Actualizado: </span>
+                  <span className="font-semibold text-gray-900 dark:text-white">
+                    {ultimaActualizacion.toLocaleTimeString('es-EC', { hour: '2-digit', minute: '2-digit' })}
+                  </span>
+                </div>
+              </div>
+              
+              {/* Estado de conexión */}
+              <EstadoConexion onReconectar={cargarDatos} />
+              
+              {/* Toggle de tema */}
+              <ThemeToggle />
             </div>
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="text-sm text-muted-foreground hidden md:block">
-              Actualizado: {ultimaActualizacion.toLocaleTimeString('es-EC')}
-            </div>
-            <EstadoConexion onReconectar={cargarDatos} />
-            <ThemeToggle />
           </div>
         </div>
+        
+        {/* Barra de acento inferior - más sutil y elegante */}
+        <div className="h-0.5 bg-gradient-to-r from-transparent via-[#C41E3A] to-transparent opacity-50"></div>
       </header>
 
       <main className="container mx-auto px-4 py-8">
+        {/* Banner de Bienvenida */}
+        <WelcomeBanner />
+
         {/* Alerta de Error de Backend */}
         {errorBackend && (
-          <div className="mb-6 p-4 bg-amber-50 dark:bg-amber-900/20 border-2 border-amber-500 rounded-lg">
-            <div className="flex items-start gap-3">
-              <AlertTriangle className="h-6 w-6 text-amber-500 flex-shrink-0 mt-0.5" />
+          <motion.div 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-6 p-5 glass border-2 border-amber-500/50 rounded-xl shadow-lg"
+          >
+            <div className="flex items-start gap-4">
+              <div className="p-3 bg-amber-500/10 rounded-lg">
+                <AlertTriangle className="h-7 w-7 text-amber-500" />
+              </div>
               <div className="flex-1">
-                <h3 className="text-lg font-bold text-amber-700 dark:text-amber-400 mb-2">
-                  ⚠️ Advertencia: Error de Conexión
+                <h3 className="text-lg font-bold text-amber-700 dark:text-amber-400 mb-2 flex items-center gap-2">
+                  ⚠️ Advertencia de Conexión
                 </h3>
-                <p className="text-sm text-amber-600 dark:text-amber-300 mb-3">
-                  {errorMensaje || 'Hubo un problema al conectar con el backend.'}
+                <p className="text-sm text-amber-600 dark:text-amber-300 mb-3 leading-relaxed">
+                  {errorMensaje || 'Problema al conectar con el backend. Usando datos en caché.'}
                 </p>
-                <div className="bg-white dark:bg-gray-800 p-3 rounded border border-amber-200 dark:border-amber-800">
-                  <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">
-                    <strong>Estado:</strong> El backend está usando caché de emergencia. Los datos pueden no estar actualizados.
+                <div className="bg-white/50 dark:bg-gray-800/50 p-4 rounded-lg border border-amber-200/50 dark:border-amber-800/50">
+                  <p className="text-xs text-gray-700 dark:text-gray-300 mb-2 font-semibold">
+                    📊 Estado del Sistema:
                   </p>
-                  <p className="text-xs text-gray-600 dark:text-gray-400">
-                    <strong>Soluciones:</strong>
-                  </p>
-                  <ul className="text-xs text-gray-600 dark:text-gray-400 list-disc list-inside mt-1 space-y-1">
-                    <li>Verifica que el backend esté en línea en Railway</li>
-                    <li>Revisa la URL del backend en las variables de entorno</li>
-                    <li>Verifica la conexión a Supabase desde el backend</li>
-                    <li>El backend usa caché automático para mantener funcionando el dashboard</li>
+                  <ul className="text-xs text-gray-600 dark:text-gray-400 space-y-1.5">
+                    <li className="flex items-center gap-2">
+                      <span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                      El backend está usando caché de emergencia
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                      Los datos pueden no estar actualizados
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <span className="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                      Verifica la conexión a Supabase/Railway
+                    </li>
                   </ul>
                 </div>
                 <button
                   onClick={cargarDatos}
-                  className="mt-3 px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white text-sm rounded-lg transition-colors"
+                  className="mt-4 px-4 py-2.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white text-sm font-semibold rounded-lg transition-smooth shadow-md hover:shadow-lg"
                 >
                   🔄 Reintentar Conexión
                 </button>
               </div>
             </div>
-          </div>
+          </motion.div>
         )}
 
         {/* Filtros Avanzados */}
         <FiltrosAvanzados eventos={eventos} onFiltrar={handleFiltrar} />
 
-        {/* KPIs */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        {/* KPIs Mejorados con Diseño ULEAM */}
+        <motion.div 
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ staggerChildren: 0.1 }}
+        >
           <StatCard
             title="Detecciones Totales"
             value={estadisticas?.totalVehiculos || 0}
+            subtitle="Vehículos monitoreados"
             icon={Car}
             color="blue"
           />
           <StatCard
             title="Infracciones Detectadas"
             value={estadisticas?.totalInfracciones || 0}
+            subtitle="Excesos de velocidad"
             icon={AlertTriangle}
-            color="red"
+            color="uleam"
           />
           <StatCard
             title="Velocidad Promedio"
             value={`${estadisticas?.velocidadPromedio || 0} km/h`}
+            subtitle="Media del tráfico"
             icon={Activity}
             color="green"
           />
           <StatCard
             title="Tasa de Infracción"
             value={`${estadisticas?.porcentajeInfracciones || 0}%`}
+            subtitle="Porcentaje de excesos"
             icon={TrendingUp}
             color="orange"
           />
-        </div>
+        </motion.div>
 
         {/* Gráficos y Velocímetro */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
           <div className="lg:col-span-2">
             <ChartCard
-              title="Tráfico por Hora"
+              title="Análisis de Tráfico por Hora"
+              description="Distribución horaria de vehículos e infracciones"
               data={datosGrafico}
               type="bar"
               dataKeys={[
-                { key: 'vehiculos', color: '#3b82f6', name: 'Vehículos' },
-                { key: 'infracciones', color: '#ef4444', name: 'Infracciones' },
+                { key: 'vehiculos', color: '#3B82F6', name: 'Vehículos Detectados' },
+                { key: 'infracciones', color: '#C41E3A', name: 'Infracciones' },
               ]}
             />
           </div>
@@ -218,10 +283,11 @@ export default function DashboardPage() {
         <div className="mb-8">
           <ChartCard
             title="Velocidad Promedio por Hora"
+            description="Tendencia de velocidad media del flujo vehicular"
             data={datosGrafico}
             type="line"
             dataKeys={[
-              { key: 'velocidadPromedio', color: '#8b5cf6', name: 'Velocidad Promedio (km/h)' },
+              { key: 'velocidadPromedio', color: '#9DC03E', name: 'Velocidad Promedio (km/h)' },
             ]}
           />
         </div>
@@ -245,14 +311,66 @@ export default function DashboardPage() {
         {/* Tabla de Eventos */}
         <TablaEventos eventos={eventosFiltrados} />
 
-        {/* Footer */}
-        <footer className="mt-12 text-center text-sm text-muted-foreground pb-8">
-          <p>
-            Desarrollado para la Casa Abierta de Tecnologías de la Información
-          </p>
-          <p className="mt-2">
-            Backend: Railway • Frontend: Next.js • Database: Firebase
-          </p>
+        {/* Footer Mejorado con Branding ULEAM */}
+        <footer className="mt-16 pb-8">
+          <div className="rounded-2xl p-8 border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-soft">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-6">
+              {/* Información del Proyecto */}
+              <div>
+                <h4 className="text-sm font-bold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
+                  <span className="w-1 h-4 bg-gradient-to-b from-[#C41E3A] to-[#9DC03E] rounded-full"></span>
+                  Sobre el Proyecto
+                </h4>
+                <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
+                  Sistema desarrollado para la Casa Abierta de Tecnologías de la Información,
+                  demostrando capacidades de IoT y análisis de datos en tiempo real.
+                </p>
+              </div>
+
+              {/* Tecnologías */}
+              <div>
+                <h4 className="text-sm font-bold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
+                  <span className="w-1 h-4 bg-gradient-to-b from-[#C41E3A] to-[#9DC03E] rounded-full"></span>
+                  Stack Tecnológico
+                </h4>
+                <div className="flex flex-wrap gap-2">
+                  <span className="px-2 py-1 bg-blue-100 dark:bg-blue-950/30 text-blue-700 dark:text-blue-400 text-xs rounded-md font-medium border border-blue-200 dark:border-blue-900/30">
+                    Next.js 16
+                  </span>
+                  <span className="px-2 py-1 bg-purple-100 dark:bg-purple-950/30 text-purple-700 dark:text-purple-400 text-xs rounded-md font-medium border border-purple-200 dark:border-purple-900/30">
+                    Supabase
+                  </span>
+                  <span className="px-2 py-1 bg-green-100 dark:bg-green-950/30 text-green-700 dark:text-green-400 text-xs rounded-md font-medium border border-green-200 dark:border-green-900/30">
+                    Railway
+                  </span>
+                  <span className="px-2 py-1 bg-orange-100 dark:bg-orange-950/30 text-orange-700 dark:text-orange-400 text-xs rounded-md font-medium border border-orange-200 dark:border-orange-900/30">
+                    MQTT
+                  </span>
+                </div>
+              </div>
+
+              {/* Universidad */}
+              <div>
+                <h4 className="text-sm font-bold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
+                  <span className="w-1 h-4 bg-gradient-to-b from-[#C41E3A] to-[#9DC03E] rounded-full"></span>
+                  Universidad ULEAM
+                </h4>
+                <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
+                  Universidad Laica "Eloy Alfaro" de Manabí<br />
+                  Facultad de Tecnologías de la Información<br />
+                  Sistemas Distribuidos • 2025
+                </p>
+              </div>
+            </div>
+
+            {/* Copyright */}
+            <div className="pt-6 border-t border-gray-200 dark:border-gray-800 text-center">
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                © 2025 ULEAM - Sistema Inteligente de Analítica Vial • 
+                Desarrollado con <span className="text-[#C41E3A]">❤</span> para la Casa Abierta
+              </p>
+            </div>
+          </div>
         </footer>
       </main>
     </div>

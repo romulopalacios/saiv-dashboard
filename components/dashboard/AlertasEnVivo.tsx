@@ -101,25 +101,33 @@ export default function AlertasEnVivo({ eventos }: AlertasEnVivoProps) {
   };
 
   return (
-    <Card className="p-6">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-xl font-semibold">Alertas en Tiempo Real</h3>
-        <div className="flex items-center gap-2">
+    <Card className="p-6 border border-gray-200 dark:border-gray-800 transition-smooth hover-glow shadow-soft hover:shadow-lg bg-white dark:bg-gray-900">
+      <div className="flex items-center justify-between mb-6">
+        <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+          Alertas en Tiempo Real
+        </h3>
+        <div className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-900/30">
           <div className="h-2 w-2 bg-green-500 rounded-full animate-pulse" />
-          <span className="text-sm text-muted-foreground">En vivo</span>
+          <span className="text-xs font-medium text-green-600 dark:text-green-400">En vivo</span>
         </div>
       </div>
 
       <div className="space-y-3">
         <AnimatePresence mode="popLayout">
           {alertas.length === 0 ? (
-            <motion.p
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="text-sm text-muted-foreground text-center py-8"
+              className="text-center py-12 rounded-lg bg-gray-50 dark:bg-gray-800/30"
             >
-              Esperando eventos...
-            </motion.p>
+              <div className="text-4xl mb-3">📡</div>
+              <p className="text-sm font-medium text-gray-900 dark:text-white mb-1">
+                Esperando eventos...
+              </p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                Las alertas aparecerán aquí en tiempo real
+              </p>
+            </motion.div>
           ) : (
             alertas.map((alerta, index) => (
               <motion.div
@@ -128,16 +136,21 @@ export default function AlertasEnVivo({ eventos }: AlertasEnVivoProps) {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 20 }}
                 transition={{ delay: index * 0.05 }}
-                className="flex items-start gap-3 p-3 rounded-lg border bg-card hover:bg-accent transition-colors"
+                className="flex items-start gap-3 p-3 rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-800/50 hover:bg-gray-50 dark:hover:bg-gray-800 transition-smooth"
               >
                 {getAlertaIcon(alerta.severidad)}
-                <div className="flex-1">
-                  <p className="text-sm font-medium">{alerta.mensaje}</p>
-                  <p className="text-xs text-muted-foreground mt-1">
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-gray-900 dark:text-white">
+                    {alerta.mensaje}
+                  </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                     {new Date(alerta.timestamp).toLocaleTimeString('es-EC')}
                   </p>
                 </div>
-                <Badge variant={getAlertaColor(alerta.severidad) as any}>
+                <Badge 
+                  variant={getAlertaColor(alerta.severidad) as any}
+                  className="shrink-0"
+                >
                   {alerta.severidad}
                 </Badge>
               </motion.div>

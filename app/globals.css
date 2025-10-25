@@ -44,72 +44,98 @@
 }
 
 :root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --radius: 0.75rem;
+  
+  /* Tema Claro - ULEAM Colors */
+  --background: #FFFFFF;
+  --foreground: #1F2937;
+  
+  --card: #FFFFFF;
+  --card-foreground: #1F2937;
+  
+  --popover: #FFFFFF;
+  --popover-foreground: #1F2937;
+  
+  /* Color primario: Rojo ULEAM */
+  --primary: #C41E3A;
+  --primary-foreground: #FFFFFF;
+  
+  /* Color secundario: Gris oscuro ULEAM */
+  --secondary: #F3F4F6;
+  --secondary-foreground: #4A4A4A;
+  
+  --muted: #F9FAFB;
+  --muted-foreground: #6B7280;
+  
+  --accent: #9DC03E;
+  --accent-foreground: #FFFFFF;
+  
+  --destructive: #EF4444;
+  --border: #E5E7EB;
+  --input: #E5E7EB;
+  --ring: #C41E3A;
+  
+  /* Colores de gráficos - Paleta ULEAM */
+  --chart-1: #C41E3A;  /* Rojo ULEAM */
+  --chart-2: #3B82F6;  /* Azul */
+  --chart-3: #9DC03E;  /* Verde lima ULEAM */
+  --chart-4: #F59E0B;  /* Amarillo/naranja */
+  --chart-5: #8B5CF6;  /* Púrpura */
+  
+  --sidebar: #FFFFFF;
+  --sidebar-foreground: #1F2937;
+  --sidebar-primary: #C41E3A;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #F3F4F6;
+  --sidebar-accent-foreground: #1F2937;
+  --sidebar-border: #E5E7EB;
+  --sidebar-ring: #C41E3A;
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  /* Tema Oscuro - ULEAM Dark Mode */
+  --background: #111827;
+  --foreground: #F9FAFB;
+  
+  --card: #1F2937;
+  --card-foreground: #F9FAFB;
+  
+  --popover: #1F2937;
+  --popover-foreground: #F9FAFB;
+  
+  /* Color primario: Rojo ULEAM más brillante para dark mode */
+  --primary: #DC2626;
+  --primary-foreground: #FFFFFF;
+  
+  --secondary: #374151;
+  --secondary-foreground: #F9FAFB;
+  
+  --muted: #374151;
+  --muted-foreground: #9CA3AF;
+  
+  --accent: #9DC03E;
+  --accent-foreground: #111827;
+  
+  --destructive: #EF4444;
+  --border: #374151;
+  --input: #374151;
+  --ring: #DC2626;
+  
+  /* Colores de gráficos - Paleta ULEAM para dark mode */
+  --chart-1: #EF4444;  /* Rojo más brillante */
+  --chart-2: #60A5FA;  /* Azul más brillante */
+  --chart-3: #A3E635;  /* Verde lima más brillante */
+  --chart-4: #FBBF24;  /* Amarillo más brillante */
+  --chart-5: #A78BFA;  /* Púrpura más brillante */
+  
+  --sidebar: #1F2937;
+  --sidebar-foreground: #F9FAFB;
+  --sidebar-primary: #DC2626;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #374151;
+  --sidebar-accent-foreground: #F9FAFB;
+  --sidebar-border: #374151;
+  --sidebar-ring: #DC2626;
 }
 
 @layer base {
@@ -117,6 +143,102 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
   }
+}
+
+/* Utilidades personalizadas ULEAM */
+@layer utilities {
+  /* Gradientes institucionales - más sutiles y profesionales */
+  .bg-gradient-uleam {
+    background: linear-gradient(135deg, #C41E3A 0%, #A01828 100%);
+  }
+  
+  .bg-gradient-uleam-light {
+    background: linear-gradient(135deg, #FEF2F2 0%, #F9FAFB 100%);
+  }
+  
+  .dark .bg-gradient-uleam-light {
+    background: linear-gradient(135deg, #1F2937 0%, #111827 100%);
+  }
+
+  /* Gradiente sutil para bordes y acentos */
+  .border-gradient-uleam {
+    border-image: linear-gradient(90deg, #C41E3A, #9DC03E) 1;
+  }
+  
+  /* Efectos de glass morphism - más sutil */
+  .glass {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(12px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+  
+  .dark .glass {
+    background: rgba(17, 24, 39, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+  
+  /* Sombras mejoradas - más suaves */
+  .shadow-uleam {
+    box-shadow: 0 8px 32px rgba(196, 30, 58, 0.08);
+  }
+  
+  .dark .shadow-uleam {
+    box-shadow: 0 8px 32px rgba(220, 38, 38, 0.15);
+  }
+
+  /* Sombra sutil para cards */
+  .shadow-soft {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  }
+
+  .dark .shadow-soft {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Animaciones suaves */
+  .transition-smooth {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  /* Texto con gradiente ULEAM - más sutil */
+  .text-gradient-uleam {
+    background: linear-gradient(135deg, #C41E3A 0%, #E63946 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Hover glow effect sutil */
+  .hover-glow {
+    transition: all 0.3s ease;
+  }
+
+  .hover-glow:hover {
+    box-shadow: 0 0 20px rgba(196, 30, 58, 0.15);
+  }
+}
+
+/* Scrollbar personalizada */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F3F4F6;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: #1F2937;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #C41E3A;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #A01828;
 }

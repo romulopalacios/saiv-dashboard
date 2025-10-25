@@ -102,12 +102,13 @@ function MapaInteractivoClient({ eventos }: MapaInteractivoProps) {
     <>
       <div 
         ref={mapContainerRef} 
-        className="rounded-lg overflow-hidden border"
+        className="rounded-lg overflow-hidden border border-gray-200 dark:border-gray-800"
         style={{ height: '400px', width: '100%' }}
       />
       {!isLoaded && (
-        <div className="absolute inset-0 flex items-center justify-center bg-muted/50 rounded-lg">
-          <p className="text-muted-foreground">Cargando mapa...</p>
+        <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-50/90 dark:bg-gray-800/90 rounded-lg">
+          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#C41E3A] mb-3"></div>
+          <p className="text-sm font-medium text-gray-900 dark:text-white">Cargando mapa...</p>
         </div>
       )}
       <style jsx global>{`
@@ -135,21 +136,31 @@ export default function MapaInteractivo({ eventos }: MapaInteractivoProps) {
 
   if (!isMounted) {
     return (
-      <Card className="p-6 h-full">
-        <h3 className="text-xl font-semibold mb-4">Mapa de Detecciones</h3>
+      <Card className="p-6 h-full border border-gray-200 dark:border-gray-800 transition-smooth shadow-soft bg-white dark:bg-gray-900">
+        <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-6">
+          Mapa de Detecciones
+        </h3>
         <div 
-          className="rounded-lg overflow-hidden border bg-muted flex items-center justify-center"
+          className="rounded-lg overflow-hidden border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/30 flex flex-col items-center justify-center"
           style={{ height: '400px', width: '100%' }}
         >
-          <p className="text-muted-foreground">Inicializando mapa...</p>
+          <div className="text-4xl mb-3">🗺️</div>
+          <p className="text-sm font-medium text-gray-900 dark:text-white mb-1">
+            Inicializando mapa...
+          </p>
+          <p className="text-xs text-gray-500 dark:text-gray-400">
+            Cargando ubicaciones
+          </p>
         </div>
       </Card>
     );
   }
 
   return (
-    <Card className="p-6 h-full relative">
-      <h3 className="text-xl font-semibold mb-4">Mapa de Detecciones</h3>
+    <Card className="p-6 h-full relative border border-gray-200 dark:border-gray-800 transition-smooth hover-glow shadow-soft hover:shadow-lg bg-white dark:bg-gray-900">
+      <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-6">
+        Mapa de Detecciones
+      </h3>
       <MapaInteractivoClient eventos={eventos} />
     </Card>
   );
