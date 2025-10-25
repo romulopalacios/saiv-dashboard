@@ -54,8 +54,15 @@ function MapaInteractivoClient({ eventos }: MapaInteractivoProps) {
             iconSize: [16, 16],
           });
 
-          // Agregar marcadores para eventos recientes
+          // Agregar marcadores para eventos recientes que tengan ubicación válida
           eventos.slice(0, 20).forEach((evento) => {
+            // Saltar eventos sin ubicación
+            if (!evento.ubicacion || 
+                typeof evento.ubicacion.lat !== 'number' || 
+                typeof evento.ubicacion.lng !== 'number') {
+              return;
+            }
+
             const marker = L.marker([evento.ubicacion.lat, evento.ubicacion.lng], {
               icon: evento.esInfraccion ? iconoInfraccion : iconoNormal,
             }).addTo(mapRef.current!);
@@ -68,8 +75,8 @@ function MapaInteractivoClient({ eventos }: MapaInteractivoProps) {
                 <hr style="margin: 8px 0; border: none; border-top: 1px solid #e5e7eb;" />
                 <p style="margin: 4px 0; font-size: 13px;"><strong>Ubicación:</strong> ${evento.ubicacion.nombre}</p>
                 <p style="margin: 4px 0; font-size: 13px;"><strong>Velocidad:</strong> ${evento.velocidad} km/h</p>
-                <p style="margin: 4px 0; font-size: 13px;"><strong>Límite:</strong> ${evento.limiteVelocidad} km/h</p>
-                <p style="margin: 4px 0; font-size: 13px;"><strong>Dirección:</strong> ${evento.direccion}</p>
+                ${evento.limiteVelocidad ? `<p style="margin: 4px 0; font-size: 13px;"><strong>Límite:</strong> ${evento.limiteVelocidad} km/h</p>` : ''}
+                ${evento.direccion ? `<p style="margin: 4px 0; font-size: 13px;"><strong>Dirección:</strong> ${evento.direccion}</p>` : ''}
                 <p style="margin: 4px 0; font-size: 12px; color: #6b7280;">${new Date(evento.timestamp).toLocaleString('es-EC')}</p>
               </div>
             `);

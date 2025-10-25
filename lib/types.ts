@@ -3,15 +3,16 @@ export interface EventoVehiculo {
   id: string;
   timestamp: number;
   velocidad: number;
-  direccion: string;
+  direccion: string | null;
   ubicacion: {
     lat: number;
     lng: number;
     nombre: string;
-  };
+  } | null;
   esInfraccion: boolean;
-  limiteVelocidad: number;
+  limiteVelocidad: number | null;
   fecha: string;
+  dispositivo_id?: string | null;
 }
 
 export interface Estadisticas {

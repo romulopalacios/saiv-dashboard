@@ -39,7 +39,7 @@ export default function AlertasEnVivo({ eventos }: AlertasEnVivoProps) {
         let severidad: 'alta' | 'media' | 'baja' = 'baja';
         
         // Determinar severidad basada en la infracción y velocidad
-        if (evento.esInfraccion) {
+        if (evento.esInfraccion && evento.limiteVelocidad) {
           const exceso = evento.velocidad - evento.limiteVelocidad;
           if (exceso > 30) {
             severidad = 'alta';
@@ -50,15 +50,23 @@ export default function AlertasEnVivo({ eventos }: AlertasEnVivoProps) {
           }
         }
 
+        // Crear mensaje basado en datos reales disponibles
+        let mensaje = '';
+        if (evento.esInfraccion && evento.limiteVelocidad) {
+          mensaje = `⚠️ Infracción: ${evento.velocidad} km/h en zona de ${evento.limiteVelocidad} km/h`;
+        } else if (evento.esInfraccion) {
+          mensaje = `⚠️ Velocidad excesiva: ${evento.velocidad} km/h`;
+        } else {
+          mensaje = `✓ Tránsito normal: ${evento.velocidad} km/h`;
+        }
+
         return {
           id: evento.id,
-          mensaje: evento.esInfraccion
-            ? `⚠️ Infracción: ${evento.velocidad} km/h en zona de ${evento.limiteVelocidad} km/h`
-            : `✓ Tránsito normal: ${evento.velocidad} km/h`,
+          mensaje,
           timestamp: evento.timestamp,
           severidad,
           velocidad: evento.velocidad,
-          ubicacion: evento.ubicacion.nombre,
+          ubicacion: evento.ubicacion?.nombre || 'Ubicación desconocida',
         };
       });
 

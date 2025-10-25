@@ -36,16 +36,33 @@ export async function getEventosRecientes(limit: number = 100) {
     );
     
     if (!response.ok) {
-      console.warn(`Backend endpoint not available: ${response.status}`);
+      const errorText = await response.text();
+      console.warn(`Backend endpoint error: ${response.status}`, errorText);
+      
+      // Si es error de cuota de Firebase, lanzar error específico
+      if (errorText.includes('Quota exceeded') || errorText.includes('RESOURCE_EXHAUSTED')) {
+        throw new Error('FIREBASE_QUOTA_EXCEEDED');
+      }
+      
       return [];
     }
     
     const data = await response.json();
     
-    // Transformar los datos al formato esperado por el frontend
-    return Array.isArray(data) ? data.map(transformarEvento) : [];
+    // Verificar si hay error en la respuesta JSON
+    if (data.error && (data.error.includes('Quota exceeded') || data.error.includes('RESOURCE_EXHAUSTED'))) {
+      throw new Error('FIREBASE_QUOTA_EXCEEDED');
+    }
+    
+    // Transformar los datos al formato esperado por el frontend y filtrar nulos
+    return Array.isArray(data) 
+      ? data.map(transformarEvento).filter((e): e is NonNullable<typeof e> => e !== null)
+      : [];
   } catch (error) {
     console.error('Error fetching eventos:', error);
+    if ((error as Error).message === 'FIREBASE_QUOTA_EXCEEDED') {
+      throw error; // Re-lanzar para que el componente lo maneje
+    }
     return [];
   }
 }
@@ -62,7 +79,21 @@ export async function getEstadisticas() {
     );
     
     if (response.ok) {
-      return await response.json();
+      const data = await response.json();
+      
+      // Verificar si hay error de cuota de Firebase
+      if (data.error && (data.error.includes('Quota exceeded') || data.error.includes('RESOURCE_EXHAUSTED'))) {
+        throw new Error('FIREBASE_QUOTA_EXCEEDED');
+      }
+      
+      // Compatibilidad con backend viejo (totalVehiculos) y nuevo (totalDetecciones)
+      return {
+        totalVehiculos: data.totalDetecciones || data.totalVehiculos || 0,
+        velocidadPromedio: data.velocidadPromedio || 0,
+        totalInfracciones: data.totalInfracciones || 0,
+        porcentajeInfracciones: data.porcentajeInfracciones || 0,
+        ultimaActualizacion: data.ultimaActualizacion || new Date().toISOString(),
+      };
     }
     
     // Opción 2: Calcular desde los eventos si no hay endpoint
@@ -161,25 +192,49 @@ export async function getDatosGrafico() {
 
 /**
  * Transformar evento de Firestore al formato del frontend
- * Estructura específica para tu backend SIAV
+ * SOLO usa datos reales del backend, NO inventa nada
  */
 function transformarEvento(evento: any) {
-  // Tu backend ya envía el formato correcto, solo normalizamos timestamps
+  // Validar que el evento tenga los datos mínimos requeridos
+  if (!evento || typeof evento !== 'object') {
+    console.warn('Evento inválido recibido:', evento);
+    return null;
+  }
+
+  // Timestamp: usar el del evento o null si no existe
+  let timestamp = Date.now();
+  if (evento.timestamp) {
+    timestamp = typeof evento.timestamp === 'string' 
+      ? new Date(evento.timestamp).getTime() 
+      : evento.timestamp;
+  } else if (evento.recibidoEn) {
+    // Firestore Timestamp
+    timestamp = evento.recibidoEn._seconds 
+      ? evento.recibidoEn._seconds * 1000 
+      : new Date(evento.recibidoEn).getTime();
+  }
+
+  // Ubicación: usar la del evento o null si no está completa
+  let ubicacion = null;
+  if (evento.ubicacion && 
+      typeof evento.ubicacion.lat === 'number' && 
+      typeof evento.ubicacion.lng === 'number') {
+    ubicacion = {
+      lat: evento.ubicacion.lat,
+      lng: evento.ubicacion.lng,
+      nombre: evento.ubicacion.nombre || 'Sin nombre',
+    };
+  }
+
   return {
-    id: evento.id || `evento-${Date.now()}`,
-    timestamp: evento.timestamp ? 
-      (typeof evento.timestamp === 'string' ? new Date(evento.timestamp).getTime() : evento.timestamp) : 
-      Date.now(),
-    velocidad: evento.velocidad || 0,
-    direccion: evento.direccion || 'N/A',
-    ubicacion: evento.ubicacion || {
-      lat: -0.9549,
-      lng: -80.7288,
-      nombre: 'Ubicación desconocida'
-    },
-    esInfraccion: evento.esInfraccion || false,
-    limiteVelocidad: evento.limiteVelocidad || 50,
-    fecha: evento.fecha || evento.timestamp || new Date().toISOString(),
-    dispositivo_id: evento.dispositivo_id || 'N/A',
+    id: evento.id || `${timestamp}`,
+    timestamp,
+    velocidad: typeof evento.velocidad === 'number' ? evento.velocidad : 0,
+    direccion: evento.direccion || null,
+    ubicacion,
+    esInfraccion: Boolean(evento.esInfraccion),
+    limiteVelocidad: typeof evento.limiteVelocidad === 'number' ? evento.limiteVelocidad : null,
+    fecha: evento.fecha || new Date(timestamp).toISOString(),
+    dispositivo_id: evento.dispositivo_id || null,
   };
 }
